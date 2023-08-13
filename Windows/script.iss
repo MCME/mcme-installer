@@ -58,6 +58,14 @@ Source: "continuity-3.0.0-beta.3+1.20.1.jar"; \
   DestDir: "{code:GetInstallDir}\mods"; \
   Flags: ignoreversion
 
+Source: "fabric-installer-0.11.2.exe"; \
+  DestDir: "{code:GetInstallDir}\MCME Installer"; \
+  Flags: ignoreversion
+
+
+[Run]
+Filename: "{app}\fabric-installer-0.11.2.exe";
+
 [Code]
 var
   InstallDir: string;
