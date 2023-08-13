@@ -26,5 +26,8 @@ Logical Zoom: https://modrinth.com/mod/logical-zoom \
 Sodium: https://modrinth.com/mod/sodium \
 Special Model Loader: https://modrinth.com/mod/special-model-loader
 
+## Uses the Fabric Installer:
+https://fabricmc.net/use/installer/
+
 ### Also uses the Minecraft-Middle Earth Human RP: 
 https://github.com/MCME/RP-Human
