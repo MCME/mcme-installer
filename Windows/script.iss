@@ -71,6 +71,12 @@ var
   InstallDir: string;
   DataDirPage: TInputDirWizardPage;
 
+function InitializeSetup: Boolean;
+begin
+  MsgBox('If you haven´t done already. Please let Minecraft version 1.20 at least run once.', mbInformation, MB_OK);
+  Result := True;
+end;
+
 function GetInstallDir(Param: String): String;
 begin
   Result := InstallDir;
