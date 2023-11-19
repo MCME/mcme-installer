@@ -38,7 +38,7 @@ Source: "logical_zoom-0.0.20.jar"; \
   DestDir: "{code:GetInstallDir}\mods"; \
   Flags: ignoreversion
 
-Source: "RP-Human-Shader.zip"; \
+Source: "Human-Sodium.zip"; \
   DestDir: "{code:GetInstallDir}\resourcepacks"; \
   Flags: ignoreversion
 
@@ -50,7 +50,7 @@ Source: "special-model-loader-mc1.20-1.2.0.jar"; \
   DestDir: "{code:GetInstallDir}\mods"; \
   Flags: ignoreversion
 
-Source: "indium-1.0.22+mc1.20.1.jar"; \
+Source: "indium-1.0.23+mc1.20.1.jar"; \
   DestDir: "{code:GetInstallDir}\mods"; \
   Flags: ignoreversion
 
