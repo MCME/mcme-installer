@@ -1,5 +1,5 @@
 #define MyAppName "MCME Installer"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "Minecraft Middle-Earth"
 #define MyAppURL "https://www.mcmiddleearth.com/"
 #define MyAppExeName "MCME-Installer.exe"
@@ -73,7 +73,7 @@ var
 
 function InitializeSetup: Boolean;
 begin
-  MsgBox('If you haven´t done already. Please let Minecraft version 1.20 at least run once.', mbInformation, MB_OK);
+  MsgBox('If you havenÂ´t done already. Please let Minecraft version 1.20 at least run once.', mbInformation, MB_OK);
   Result := True;
 end;
 
