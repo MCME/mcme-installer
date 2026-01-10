@@ -43,7 +43,7 @@ public class NewInstaller extends JFrame {
     private String snapshotPlaceholder = "Warning: <version> is a snapshot build and may";
     private String BASE_URL = "https://raw.githubusercontent.com/IrisShaders/Iris-Installer-Files/master/";
     private boolean finishedSuccessfulInstall;
-    private String selectedVersion = "1.20.1";
+    private String selectedVersion = "1.21.4";
     //private final List<InstallerMeta.Version> GAME_VERSIONS;
     private final InstallerMeta INSTALLER_META;
     private Path customInstallDir;
