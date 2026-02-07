@@ -14,7 +14,7 @@ Iris: https://modrinth.com/mod/iris \
 LambDynamicLights: https://modrinth.com/mod/lambdynamiclights \
 Logical Zoom: https://modrinth.com/mod/logical-zoom \
 Sodium: https://modrinth.com/mod/sodium \
-Special Model Loader: https://modrinth.com/mod/special-model-loader
+Special Model Loader: https://modrinth.com/mod/special-model-loader \
 MCME Mod Marker: XXX
 
 ## How to update the Installer to a new version
