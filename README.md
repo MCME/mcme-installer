@@ -17,15 +17,8 @@ http://s.sudre.free.fr/Software/Packages/about.html
 Let the software istall the contents into Library/MCME /mods and /resourcepacks via the payload tab. Then put the script.sh as post-installation script and compile. Done!
 
 ## Included mods:
+https://github.com/MCME/mcme-installer/blob/dev/mod_list/mod_list.md
 
-Continuity: https://modrinth.com/mod/continuity \
-Fabric API: https://modrinth.com/mod/fabric-api \
-Indium: https://modrinth.com/mod/indium \
-Iris: https://modrinth.com/mod/iris \
-LambDynamicLights: https://modrinth.com/mod/lambdynamiclights \
-Logical Zoom: https://modrinth.com/mod/logical-zoom \
-Sodium: https://modrinth.com/mod/sodium \
-Special Model Loader: https://modrinth.com/mod/special-model-loader
 
 ## Uses the Fabric Installer:
 https://fabricmc.net/use/installer/
