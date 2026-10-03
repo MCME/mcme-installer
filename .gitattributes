@@ -1,0 +1,3 @@
+# the shader code the installer writes into shader packs: as patch_shaderpack.py writes it
+src/main/resources/mcme/** text eol=lf
+

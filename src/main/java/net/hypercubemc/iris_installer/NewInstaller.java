@@ -28,6 +28,7 @@ import net.fabricmc.installer.Main;
 import net.fabricmc.installer.util.MetaHandler;
 import net.fabricmc.installer.util.Reference;
 import net.fabricmc.installer.util.Utils;
+import net.hypercubemc.iris_installer.shaders.ShaderPacksDialog;
 import org.json.JSONException;
 
 /**
@@ -43,7 +44,7 @@ public class NewInstaller extends JFrame {
     private String snapshotPlaceholder = "Warning: <version> is a snapshot build and may";
     private String BASE_URL = "https://raw.githubusercontent.com/IrisShaders/Iris-Installer-Files/master/";
     private boolean finishedSuccessfulInstall;
-    private String selectedVersion = "1.21.4";
+    private String selectedVersion = "26.2";
     //private final List<InstallerMeta.Version> GAME_VERSIONS;
     private final InstallerMeta INSTALLER_META;
     private Path customInstallDir;
@@ -229,12 +230,13 @@ public class NewInstaller extends JFrame {
         directoryName = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         installButton = new javax.swing.JButton();
+        shaderPacksButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(Objects.requireNonNull(Utils.class.getClassLoader().getResource("iris_profile_icon.png"))).getImage());
-        setMaximumSize(new java.awt.Dimension(480, 510));
-        setMinimumSize(new java.awt.Dimension(480, 510));
-        setPreferredSize(new java.awt.Dimension(480, 510));
+        setMaximumSize(new java.awt.Dimension(480, 545));
+        setMinimumSize(new java.awt.Dimension(480, 545));
+        setPreferredSize(new java.awt.Dimension(480, 545));
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -387,6 +389,17 @@ public class NewInstaller extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(12, 0, 0, 0);
         getContentPane().add(installButton, gridBagConstraints);
 
+        shaderPacksButton.setFont(shaderPacksButton.getFont().deriveFont((float) 13));
+        shaderPacksButton.setText("Shader packs…");
+        shaderPacksButton.setToolTipText("Make MCME edits of your shader packs, which show Mordor's fire eye.");
+        shaderPacksButton.putClientProperty("JButton.buttonType", "borderless");
+        shaderPacksButton.addActionListener(evt -> ShaderPacksDialog.open(this, getInstallDir()));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        getContentPane().add(shaderPacksButton, gridBagConstraints);
+
         thankYouLabel.setFont(thankYouLabel.getFont().deriveFont(thankYouLabel.getFont().getStyle() | Font.PLAIN, 11));
         thankYouLabel.setHorizontalAlignment(SwingConstants.RIGHT); // Set horizontal alignment to RIGHT
         thankYouLabel.setVerticalAlignment(SwingConstants.TOP); // Set vertical alignment to TOP
@@ -399,7 +412,7 @@ public class NewInstaller extends JFrame {
         thankYouLabel.setRequestFocusEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.0; // Set weighty to 0 to prevent expansion
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -637,6 +650,9 @@ public class NewInstaller extends JFrame {
                     progressBar.setForeground(new Color(39, 195, 75));
                     installButton.setEnabled(true);
                     finishedSuccessfulInstall = true;
+
+                    // the shader packs it has, for MCME edits that show the fire eye
+                    ShaderPacksDialog.open(this, getInstallDir());
                 } else {
                     installButton.setText("Failed!");
                     progressBar.setForeground(new Color(204, 0, 0));
@@ -675,6 +691,7 @@ public class NewInstaller extends JFrame {
     private javax.swing.JRadioButton fabricType;
     private javax.swing.JComboBox<String> gameVersionList;
     private javax.swing.JButton installButton;
+    private javax.swing.JButton shaderPacksButton;
     private javax.swing.ButtonGroup installType;
     private javax.swing.JLabel installationDirectory;
     private javax.swing.JLabel installationType;
