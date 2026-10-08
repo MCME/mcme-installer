@@ -19,11 +19,13 @@ MCME Mod Marker: XXX
 
 ## How to update the Installer to a new version
 
-1. Update the version for the MCME-Installer
-   - Change the value of the variable "selectedVersion" in "NewInstaller.java" to the new version
+The installer supports several Minecraft versions at once; the player picks one in the "Minecraft version" dropdown. It installs Fabric Loader for that version and the mods from `MCME-Mods-<version>.zip`, each version with its own launcher profile ("MCME for <version>") and mods folder.
+
+1. Update the mods for the MCME-Installer
+   - compile them into a .zip-File named `MCME-Mods-<version>.zip` (e.g. `MCME-Mods-26.3.zip`), with the jars inside a top-level `mods/` folder
+   - upload the file on the releases page on GitHub (add it to / replace it in the "Mods" release (marked as Pre-release))
+2. Update the versions of the MCME-Installer (only when adding or dropping a Minecraft version)
+   - Change the `GAME_VERSIONS` array in "NewInstaller.java" (the first entry is the default)
    - compile the installer
    - upload the new installer .jar on the releases page on GitHub (change the file of the "Sodium quick MCME mod installer for Windows version 2.0" release)
      -> the download links don't need to be changed
-2. Update the mods for the MCME-Installer
-   - compile them into a .zip-File and name it MCME-Mods
-   - upload the file on the releases page on GitHub (change the file of the "Mods" release (marked as Pre-release))

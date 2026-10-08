@@ -43,8 +43,10 @@ public class NewInstaller extends JFrame {
     private String snapshotPlaceholder = "Warning: <version> is a snapshot build and may";
     private String BASE_URL = "https://raw.githubusercontent.com/IrisShaders/Iris-Installer-Files/master/";
     private boolean finishedSuccessfulInstall;
-    private String selectedVersion = "1.21.4";
-    //private final List<InstallerMeta.Version> GAME_VERSIONS;
+    // Supported Minecraft versions, the first one is selected by default.
+    // Each needs a matching MCME-Mods-<version>.zip in the "Mods" release.
+    private static final String[] GAME_VERSIONS = {"26.2", "26.3"};
+    private String selectedVersion = GAME_VERSIONS[0];
     private final InstallerMeta INSTALLER_META;
     private Path customInstallDir;
 
@@ -82,8 +84,6 @@ public class NewInstaller extends JFrame {
 
         initComponents();
 
-        betaSelection.setText("Use " + INSTALLER_META.getBetaSnippet() + " beta version (not recommended)");
-
         // Change outdated version text color based on dark mode
         if (!dark) {
             Color newTextColor = new Color(154, 136, 63, 255);
@@ -92,18 +92,6 @@ public class NewInstaller extends JFrame {
             outdatedText2.setForeground(newTextColor);
         }
 
-        if (!INSTALLER_META.hasBeta()) {
-            betaSelection.setVisible(false);
-        }
-
-        /*
-        gameVersionList.removeAllItems();
-
-        for (InstallerMeta.Version version : GAME_VERSIONS) {
-            gameVersionList.addItem(version.name);
-        }
-
-         */
 
         // Set default dir (.minecraft)
         directoryName.setText(getDefaultInstallDir().toFile().getName());
@@ -224,8 +212,9 @@ public class NewInstaller extends JFrame {
         installationTypesContainer = new javax.swing.JPanel();
         standaloneType = new javax.swing.JRadioButton();
         fabricType = new javax.swing.JRadioButton();
+        gameVersionContainer = new javax.swing.JPanel();
+        gameVersionLabel = new javax.swing.JLabel();
         gameVersionList = new javax.swing.JComboBox<>();
-        betaSelection = new javax.swing.JCheckBox();
         directoryName = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         installButton = new javax.swing.JButton();
@@ -333,13 +322,24 @@ public class NewInstaller extends JFrame {
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
         getContentPane().add(installationTypesContainer, gridBagConstraints);
 
-        betaSelection.setFont(betaSelection.getFont().deriveFont((float)16));
-        betaSelection.setText("Use beta version (not recommended)");
+        gameVersionContainer.setLayout(new java.awt.BorderLayout(10, 0));
+
+        gameVersionLabel.setFont(gameVersionLabel.getFont().deriveFont(gameVersionLabel.getFont().getStyle() | java.awt.Font.BOLD, 16));
+        gameVersionLabel.setText("Minecraft version:");
+        gameVersionContainer.add(gameVersionLabel, java.awt.BorderLayout.LINE_START);
+
+        gameVersionList.setFont(gameVersionList.getFont().deriveFont((float)16));
+        gameVersionList.setModel(new javax.swing.DefaultComboBoxModel<>(GAME_VERSIONS));
+        gameVersionList.setSelectedItem(selectedVersion);
+        gameVersionList.setToolTipText("The Minecraft version to install MCME and Fabric for.");
+        gameVersionList.addItemListener(this::gameVersionListItemStateChanged);
+        gameVersionContainer.add(gameVersionList, java.awt.BorderLayout.LINE_END);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
-        getContentPane().add(betaSelection, gridBagConstraints);
+        getContentPane().add(gameVersionContainer, gridBagConstraints);
 
         directoryName.setFont(directoryName.getFont().deriveFont((float)16));
         directoryName.setLabel("Directory Name");
@@ -446,34 +446,14 @@ public class NewInstaller extends JFrame {
         }
     }//GEN-LAST:event_directoryNameMouseClicked
 
-    /*
     private void gameVersionListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_gameVersionListItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            //selectedVersion = GAME_VERSIONS.stream().filter(v -> v.name.equals(evt.getItem())).findFirst().orElse(GAME_VERSIONS.get(0));
-
-            if (selectedVersion.outdated) {
-                outdatedText1.setText(outdatedPlaceholder.replace("<version>", selectedVersion.name));
-                betaSelection.setVisible(false);
-                outdatedText1.setVisible(true);
-                outdatedText2.setText("The Iris version you get will most likely be outdated.");
-                outdatedText2.setVisible(true);
-            } else if (selectedVersion.snapshot) {
-                outdatedText1.setText(snapshotPlaceholder.replace("<version>", selectedVersion.name));
-                betaSelection.setVisible(false);
-                outdatedText1.setVisible(true);
-                outdatedText2.setText("lose support at any time.");
-                outdatedText2.setVisible(true);
-            } else {
-                if (INSTALLER_META.hasBeta()) {
-                    betaSelection.setVisible(true);
-                }
-                outdatedText1.setVisible(false);
-                outdatedText2.setVisible(false);
-            }
+            selectedVersion = (String) evt.getItem();
+            // A new version means a new download, so reset the result of a previous install
+            installButton.setText("Install");
+            progressBar.setValue(0);
         }
     }//GEN-LAST:event_gameVersionListItemStateChanged
-
-     */
 
     private void standaloneTypeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_standaloneTypeMouseClicked
         installAsMod = false;
@@ -514,13 +494,15 @@ public class NewInstaller extends JFrame {
         //installButton.setMargin(new java.awt.Insets(10, 90, 10, 90));
 
         installButton.setEnabled(false);
+        gameVersionList.setEnabled(false);
         progressBar.setForeground(new Color(76, 135, 200));
         progressBar.setValue(0);
 
         //String zipName = (betaSelection.isSelected() ? "Iris-Sodium-Beta" : "Iris-Sodium") + "-" + selectedVersion.name + ".zip";
         //String downloadURL = "https://github.com/IrisShaders/Iris-Installer-Files/releases/latest/download/" + zipName;
-        String zipName = "MCME-Mods.zip";
-        String downloadURL = "https://github.com/MCME/mcme-installer/releases/download/Mods/MCME-Mods.zip";
+        String zipName = "MCME-Mods-" + selectedVersion + ".zip";
+        // -Dmcme.modsUrl=file:///C:/path/to/zips/ tests zips before they're uploaded to the release
+        String downloadURL = System.getProperty("mcme.modsUrl", "https://github.com/MCME/mcme-installer/releases/download/Mods/") + zipName;
         File saveLocation = getStorageDirectory().resolve(zipName).toFile();
 
         final Downloader downloader = new Downloader(downloadURL, saveLocation);
@@ -528,6 +510,8 @@ public class NewInstaller extends JFrame {
             if ("progress".equals(event.getPropertyName())) {
                 progressBar.setValue((Integer) event.getNewValue());
             } else if (event.getNewValue() == SwingWorker.StateValue.DONE) {
+                gameVersionList.setEnabled(true);
+
                 try {
                     downloader.get();
                 } catch (InterruptedException | ExecutionException e) {
@@ -670,9 +654,10 @@ public class NewInstaller extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox betaSelection;
     private javax.swing.JButton directoryName;
     private javax.swing.JRadioButton fabricType;
+    private javax.swing.JPanel gameVersionContainer;
+    private javax.swing.JLabel gameVersionLabel;
     private javax.swing.JComboBox<String> gameVersionList;
     private javax.swing.JButton installButton;
     private javax.swing.ButtonGroup installType;

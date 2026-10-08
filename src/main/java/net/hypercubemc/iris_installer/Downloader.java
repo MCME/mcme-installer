@@ -3,7 +3,7 @@ package net.hypercubemc.iris_installer;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
+import java.net.URLConnection;
 import javax.swing.SwingWorker;
 
 /*
@@ -27,8 +27,8 @@ public class Downloader extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         URL url = new URL(this.url);
-        HttpsURLConnection connection = (HttpsURLConnection) url
-                .openConnection();
+        // URLConnection rather than HttpsURLConnection, so file: URLs work for local testing
+        URLConnection connection = url.openConnection();
         long filesize = connection.getContentLengthLong();
 
         if (filesize == -1) {
