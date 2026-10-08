@@ -11,4 +11,4 @@ The jars in [`Files/`](Files) are exactly the ones packed into `MCME-Mods.zip` (
 | Logical Zoom | 0.0.36 | https://modrinth.com/mod/logical-zoom |
 | Sodium | 0.9.2+mc26.2 | https://modrinth.com/mod/sodium |
 | Special Model Loader | mc26.2-1.4.0-26.2 | https://modrinth.com/mod/special-model-loader |
-| MCME-Marker | 1.0.0 | https://github.com/MCME/MCME-Modpack-Marker |
+| MCME-Marker | 1.1.0 | https://github.com/MCME/MCME-Modpack-Marker |
