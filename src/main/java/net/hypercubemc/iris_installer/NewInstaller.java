@@ -10,15 +10,19 @@ import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -29,6 +33,7 @@ import net.fabricmc.installer.util.MetaHandler;
 import net.fabricmc.installer.util.Reference;
 import net.fabricmc.installer.util.Utils;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -189,6 +194,52 @@ public class NewInstaller extends JFrame {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /** The Fabric mod ids of the jars in the zip's mods/ folder. */
+    private static Set<String> modIdsInZip(File zip) {
+        Set<String> ids = new HashSet<>();
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zip))) {
+            for (ZipEntry entry = zipIn.getNextEntry(); entry != null; entry = zipIn.getNextEntry()) {
+                if (entry.getName().startsWith("mods/") && entry.getName().endsWith(".jar")) {
+                    // not closed: that would close the zip around it
+                    String id = modId(new ZipInputStream(zipIn));
+                    if (id != null) {
+                        ids.add(id);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ids;
+    }
+
+    /** The Fabric mod id of a jar, or null if it isn't a Fabric mod or can't be read. */
+    private static String modIdOfJar(File jar) {
+        try (ZipInputStream in = new ZipInputStream(new FileInputStream(jar))) {
+            return modId(in);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static String modId(ZipInputStream jar) throws IOException {
+        for (ZipEntry entry = jar.getNextEntry(); entry != null; entry = jar.getNextEntry()) {
+            if (entry.getName().equals("fabric.mod.json")) {
+                ByteArrayOutputStream json = new ByteArrayOutputStream();
+                byte[] buffer = new byte[4096];
+                for (int read; (read = jar.read(buffer)) != -1; ) {
+                    json.write(buffer, 0, read);
+                }
+                try {
+                    return new JSONObject(new String(json.toByteArray(), StandardCharsets.UTF_8)).optString("id", null);
+                } catch (JSONException e) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -585,19 +636,27 @@ public class NewInstaller extends JFrame {
                     }
 
                     if (!cancelled) {
-                        boolean failedToRemoveIrisOrSodium = false;
+                        // Remove the old versions of the modpack's mods: an update can rename a jar,
+                        // and Fabric won't start with two copies of a mod. Only the jars with the
+                        // zip's mod ids go, so the mods the player added themselves stay.
+                        boolean failedToRemoveOldMods = false;
+                        Set<String> modpackIds = modIdsInZip(saveLocation);
 
                         for (File mod : modsFolderContents) {
-                            if (mod.getName().toLowerCase().contains("iris") || mod.getName().toLowerCase().contains("sodium-fabric")) {
+                            if (!mod.isFile() || !mod.getName().toLowerCase().endsWith(".jar")) {
+                                continue;
+                            }
+
+                            if (modpackIds.contains(modIdOfJar(mod))) {
                                 if (!mod.delete()) {
-                                    failedToRemoveIrisOrSodium = true;
+                                    failedToRemoveOldMods = true;
                                 }
                             }
                         }
 
-                        if (failedToRemoveIrisOrSodium) {
-                            System.out.println("Failed to remove Iris or Sodium from mods folder to update them!");
-                            JOptionPane.showMessageDialog(this, "Failed to remove iris and sodium from your mods folder to update them, please make sure your game is closed and try again!", "Failed to prepare mods for update", JOptionPane.ERROR_MESSAGE);
+                        if (failedToRemoveOldMods) {
+                            System.out.println("Failed to remove the old mods from the mods folder to update them!");
+                            JOptionPane.showMessageDialog(this, "Failed to remove the old mods from your mods folder to update them, please make sure your game is closed and try again!", "Failed to prepare mods for update", JOptionPane.ERROR_MESSAGE);
                             cancelled = true;
                         }
                     }
